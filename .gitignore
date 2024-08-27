@@ -17,8 +17,6 @@ packages/material-react-table/locales
 # mrt
 *.log
 .cache
-/dist
-dist
 storybook-static
 
 # misc
