@@ -1,12 +1,11 @@
+import MenuItem from '@mui/material/MenuItem';
+import TextField, { type TextFieldProps } from '@mui/material/TextField';
 import {
+  useState,
   type ChangeEvent,
   type FocusEvent,
   type KeyboardEvent,
-  useState,
 } from 'react';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import { type TextFieldProps } from '@mui/material/TextField';
 import {
   type MRT_Cell,
   type MRT_RowData,
@@ -42,6 +41,7 @@ export const MRT_EditCellTextField = <TData extends MRT_RowData>({
   const isEditing = editingRow?.id === row.id;
 
   const [value, setValue] = useState(() => cell.getValue<string>());
+  const [completesComposition, setCompletesComposition] = useState(true);
 
   const textFieldProps: TextFieldProps = {
     ...parseFromValuesOrFunc(muiEditTextFieldProps, {
@@ -94,7 +94,7 @@ export const MRT_EditCellTextField = <TData extends MRT_RowData>({
 
   const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     textFieldProps.onKeyDown?.(event);
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && completesComposition) {
       editInputRefs.current[column.id]?.blur();
     }
   };
@@ -164,6 +164,8 @@ export const MRT_EditCellTextField = <TData extends MRT_RowData>({
         textFieldProps?.onClick?.(e);
       }}
       onKeyDown={handleEnterKeyDown}
+      onCompositionStart={() => setCompletesComposition(false)}
+      onCompositionEnd={() => setCompletesComposition(true)}
     >
       {textFieldProps.children ??
         selectOptions?.map((option) => {
